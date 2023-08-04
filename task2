@@ -1,0 +1,52 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
+public class GameManager : MonoBehaviour {
+    public GameObject circlePrefab;
+    public GameObject linePrefab;
+    public Text scoreText;
+    public Button restartButton;
+    private List<GameObject> circles = new List<GameObject>();
+    private GameObject line;
+    private int score = 0;
+    private void Start() {
+        // Spawn random circles
+        for (int i = 0; i < 5; i++) {
+            GameObject circle = Instantiate(circlePrefab);
+            circle.transform.position = new Vector2(Random.Range(0, Screen.width), Random.Range(0, Screen.height));
+            circles.Add(circle);
+        }
+        // Create the line
+        line = Instantiate(linePrefab);
+        line.transform.position = new Vector2(0, 0);
+        line.transform.parent = transform;
+        // Add listeners to the restart button
+        restartButton.onClick.AddListener(RestartGame);
+    }
+    private void Update() {
+        // Check if the user is drawing a line
+        if (Input.GetMouseButtonDown(0)) {
+            // Start a new line
+            line.transform.position = Input.mousePosition;
+        }
+        if (Input.GetMouseButtonUp(0)) {
+            // Stop the line
+            line.transform.position = Input.mousePosition;
+            // Check if the line crosses any circles
+            foreach (GameObject circle in circles) {
+                if (line.transform.intersects(circle.transform)) {
+                    // Destroy the circle
+                    Destroy(circle);
+                    // Increase the score
+                    score++;
+                    // Update the score text
+                    scoreText.text = score.ToString();
+                }
+            }
+        }
+    }
+    private void RestartGame() {
+        // Destroy all the circles
+        foreach (GameObject circle in circles) {
