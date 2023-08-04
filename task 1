@@ -1,0 +1,41 @@
+csharp
+
+using System.Collections;
+
+using System.Collections.Generic;
+
+using UnityEngine;
+
+using UnityEngine.UI;
+
+using UnityEngine.SceneManagement;
+
+using DG.Tweening;
+
+
+public class ClientList : MonoBehaviour
+
+{
+    public Dropdown filterDropdown;
+    public Text clientListText;
+    public GameObject clientDetailPanel;
+    public Text clientDetailNameText;
+    public Text clientDetailPointsText;
+    public Text clientDetailAddressText;
+
+    private List<string> clientNames = new List<string>();
+    private List<int> clientPoints = new List<int>();
+    private List<string> clientAddresses = new List<string>();
+
+    private void Start()
+    {
+        // Call the API endpoint
+        StartCoroutine(FetchClientData());
+
+        // Add listeners to dropdown
+        filterDropdown.onValueChanged.AddListener(delegate { UpdateClientList(); });
+    }
+
+    private IEnumerator FetchClientData()
+    {
+        using (var webClient = new System
